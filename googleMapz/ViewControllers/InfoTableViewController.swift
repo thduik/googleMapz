@@ -14,6 +14,7 @@ protocol InfoTableViewDelegate {
 class InfoTableViewController: UITableViewController {
     var placeInfo:PlaceInfoStruct
     var delegate:InfoTableViewDelegate?
+    var completionTableVC = CompletionTableViewController()
     
     init(style: UITableView.Style, placeData:PlaceInfoStruct) {
         placeInfo = placeData
@@ -41,6 +42,9 @@ class InfoTableViewController: UITableViewController {
             self.showPhoneCell = true
         }
         
+        if let websiteUrl = self.placeInfo.url {
+            self.showUrlCell = true
+        }
     }
 
     // MARK: - Table view data source
@@ -84,6 +88,11 @@ class InfoTableViewController: UITableViewController {
                 return cell
             case 1:
                 let cell = tableView.dequeueReusableCell(withIdentifier: SecondInfoCell.identifier, for: indexPath) as! SecondInfoCell
+                let secondCellGesture = UITapGestureRecognizer(target: self, action: #selector(didSelectSecondCellButton))
+                secondCellGesture.delegate = self
+                cell.button.addGestureRecognizer(secondCellGesture)
+                cell.delegate = self
+                cell.bringSubviewToFront(cell.button)
                 return cell
             default:
                 break
@@ -108,6 +117,7 @@ class InfoTableViewController: UITableViewController {
             return cell
         case 4:
             let cell = tableView.dequeueReusableCell(withIdentifier: SixthInfoCell.identifier, for: indexPath) as! SixthInfoCell
+            
             return cell
         case 5:
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
@@ -125,7 +135,14 @@ class InfoTableViewController: UITableViewController {
         return cell
     }
     
-
+    @objc func didSelectSecondCellButton() {
+        print ("did select second cell")
+        self.delegate?.didTapDirectionButton()
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    
+    
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
@@ -146,25 +163,7 @@ class InfoTableViewController: UITableViewController {
         return nil
     }
     
-//    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-//        switch indexPath.section {
-//        case 0:
-//            return 76
-//        case 1:
-//            return 112
-//        case 2:
-//            return self.showPhoneCell ? 64 : 0
-//        case 3:
-//            return self.showUrlCell ? 64 : 0
-//        case 4:
-//            return 156
-//        case 5:
-//            return 76
-//        default:
-//            return 0
-//        }
-//        return 0
-//    }
+
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
@@ -206,12 +205,21 @@ class InfoTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         
-        return 30
+        return 0 //30
     }
+}
+
+extension InfoTableViewController:UIGestureRecognizerDelegate {
     
 }
 
-extension InfoTableViewController:SixthInfoCellDelegate {
+
+extension InfoTableViewController:SixthInfoCellDelegate, SecondInfoCellDelegate {
+    func buttonDidTap() {
+        self.delegate?.didTapDirectionButton()
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     func callButtonTapped() {
         
     }

@@ -1,0 +1,12 @@
+
+/* Class = "UILabel"; text = "LAT"; ObjectID = "AdE-cM-vz2"; */
+"AdE-cM-vz2.text" = "LAT";
+
+/* Class = "UILabel"; text = "LON"; ObjectID = "f0q-kd-S6x"; */
+"f0q-kd-S6x.text" = "LON";
+
+/* Class = "UILabel"; text = "NAME"; ObjectID = "ii7-nJ-8xu"; */
+"ii7-nJ-8xu.text" = "NAME";
+
+/* Class = "UIButton"; normalTitle = "CONFIRM"; ObjectID = "yzZ-ZS-ZIK"; */
+"yzZ-ZS-ZIK.normalTitle" = "CONFIRM";

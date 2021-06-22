@@ -22,6 +22,7 @@ class SecondInfoCell:UITableViewCell {
         super.init(style: style, reuseIdentifier: SecondInfoCell.identifier)
         setupView()
         selectionStyle = .none
+        button.addTarget(self, action: #selector(buttonDidTap), for: .touchUpOutside)
     }
     
     
@@ -37,13 +38,15 @@ class SecondInfoCell:UITableViewCell {
         button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
         button.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
         button.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 4).isActive = true
-        button.addTarget(self, action: #selector(buttonDidTap), for: .touchUpInside)
+        
         button.setTitle("Direction", for: .normal)
         button.backgroundColor = UIColor.blue
         button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 20
     }
     
     @objc func buttonDidTap() {
+        print ("secondINfoCell buttonDIdTap")
         self.delegate?.buttonDidTap()
     }
 }
