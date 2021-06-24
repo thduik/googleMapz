@@ -36,23 +36,25 @@ class DirectionInstructionView: UIView {
         addSubview(distanceLabel)
         distanceLabel.translatesAutoresizingMaskIntoConstraints = false
         distanceLabel.leadingAnchor.constraint(equalTo: instructionImageView.trailingAnchor, constant: 12).isActive = true
-        distanceLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12).isActive = true
-        distanceLabel.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.4).isActive = true
+        distanceLabel.topAnchor.constraint(equalTo: topAnchor, constant: 32).isActive = true
+        distanceLabel.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.3).isActive = true
         distanceLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12).isActive = true
         distanceLabel.font = .boldSystemFont(ofSize: 23)
+        distanceLabel.numberOfLines = 0
         
         
         addSubview(instructionLabel)
         instructionLabel.translatesAutoresizingMaskIntoConstraints = false
         instructionLabel.leadingAnchor.constraint(equalTo: instructionImageView.trailingAnchor, constant: 12).isActive = true
         instructionLabel.topAnchor.constraint(equalTo: distanceLabel.bottomAnchor, constant: 8).isActive = true
-        instructionLabel.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.4).isActive = true
+        instructionLabel.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.3).isActive = true
         instructionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12).isActive = true
         instructionLabel.font = .systemFont(ofSize: 21)
+        instructionLabel.numberOfLines = 0
     }
     
-    public func updateLabels(distance:CLLocationDistance, instructions:String) {
-        distanceLabel.text = "\(distance)m"
+    public func updateLabels(distance:String, instructions:String) {
+        distanceLabel.text = "In " + String(distance.prefix(6)) + "m"
         instructionLabel.text = instructions
     }
     

@@ -11,3 +11,12 @@ import MapKit
 class MapLolPolyline: MKPolyline {
     
 }
+
+class RoutePolyline: MKPolyline {
+    let routeIndex:Int
+    init(routeIndex:Int) {
+        self.routeIndex = routeIndex
+        super.init()
+    }
+}
+

@@ -19,6 +19,7 @@ class CompletionTableViewPresenter:NSObject {
     var delegateVC:CompletionPresenterToVCDelegate?
     let completer = MKLocalSearchCompleter()
     var mapView:MKMapView!
+    var doesNotShowTable:Bool = false
     
     init(tableView:UITableView, parentVC:CompletionPresenterToVCDelegate, mapView:MKMapView) {
         super.init()
@@ -42,10 +43,18 @@ class CompletionTableViewPresenter:NSObject {
         let currentRegion = MKCoordinateRegion(center: mapView.centerCoordinate, latitudinalMeters: 3000, longitudinalMeters: 3000)
         completer.region = currentRegion
     }
+    
+    public func doesNotShowTable(_ bool:Bool) {
+        self.doesNotShowTable = bool
+    }
 }
 
 extension CompletionTableViewPresenter: MKLocalSearchCompleterDelegate {
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        if self.doesNotShowTable {
+            self.completionArray = []
+            return
+        }
         self.completionArray = completer.results
         tableView.reloadData()
         self.tableView.isHidden = self.completionArray.isEmpty
@@ -75,5 +84,11 @@ extension CompletionTableViewPresenter: UITableViewDataSource, UITableViewDelega
         self.tableView.isHidden = true
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.alpha = 0
+        UIView.animate(withDuration: 0.05, delay: 0.03 * Double(indexPath.row), options: []) {
+            cell.alpha = 1
+        }
+    }
     
 }

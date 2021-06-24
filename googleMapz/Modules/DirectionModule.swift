@@ -11,16 +11,23 @@ import UIKit
 
 
 protocol DirectionModuleToVCDelegate {
-    func updateDirectionLabel(distance:String, directionText:String)
-    func startDirection(distance:String, directionText:String)
+    func updateDirectionLabel(distance:String)
+    func startDirection(distance:String)
     func endDirection()
     func directionModuleWarning(text:String)
+    func presentRouteSelectTableView(destination: String, origin: String, routeData: [RouteTableViewData])
+        
 }
 
 
 class DirectionModule:NSObject {
     
-    var mapView = MKMapView()
+    var mapView = MKMapView() {
+        didSet {
+            let mapTap = UITapGestureRecognizer(target: self, action: #selector(mapTapped(_:)))
+            self.mapView.addGestureRecognizer(mapTap)
+        }
+    }
     var polyline = MKPolyline()
     var circleOverlays:[MKCircle] = []
 
@@ -30,6 +37,12 @@ class DirectionModule:NSObject {
     
     var directionModuleToVCDelegate:DirectionModuleToVCDelegate?
     
+    //for display available routes after finding routes
+    var availableRoutes:[MKRoute] = []
+    var availableRotesOverlays:[RoutePolylineOverlay] = []
+    var selectedRouteIndex:Int = 0
+    //var routeSelectTableView: RouteSelectionView!
+    
     //math and data vars for direction function
     var currentStep:Int = 0
     var totalSteps:Int = 0
@@ -38,14 +51,16 @@ class DirectionModule:NSObject {
     var routePoints:[DirectionCLLocation] = []
     var distanceLeftToNextStep:CLLocationDistance = 0
     var distancesToNextStep:[CLLocationDistance] = [] //first value has to be initiated
-    
     var route:MKRoute = MKRoute()
     var steps:[MKRoute.Step] = []
     
-    var currentDirectionText:String = ""
+    public var currentDirectionText:String = ""
     var incrementStepNext:Bool = false
+    var stepOfNextLoc:Int = 0
     
     
+    
+
     override init() {
         super.init()
         locationManager.delegate = self
@@ -56,7 +71,7 @@ class DirectionModule:NSObject {
         locationManager.desiredAccuracy = CLLocationAccuracy(CLAccuracyAuthorization(rawValue: CLAccuracyAuthorization.RawValue(kCLLocationAccuracyBest))!.rawValue)
     }
     
-    func startDirectionRequest() {
+    func startDirectionRequest(destination:CLLocationCoordinate2D) {
         
         let request = MKDirections.Request()
         
@@ -69,65 +84,101 @@ class DirectionModule:NSObject {
         
         // Specify the transportation type
         request.transportType = MKDirectionsTransportType.automobile
-
+        
         // If you're open to getting more than one route,
         // requestsAlternateRoutes = true; else requestsAlternateRoutes = false;
         request.requestsAlternateRoutes = true
         
         let directions = MKDirections(request: request)
         
+        self.resetDirectionData()
+        
+        
         mapView.removeOverlay(self.polyline)
         self.mapView.removeOverlays(self.circleOverlays)
+        self.mapView.removeOverlays(self.availableRotesOverlays)
+//        self.mapView.removeOverlays(self.availableRotesOverlays.map {$0.polyline})
         self.circleOverlays = []
+        self.availableRotesOverlays = []
+        self.availableRoutes = []
+        self.selectedRouteIndex = 0
+        
         //circle overlays are only for demonstration purposes
             directions.calculate {
-                [unowned self](response, error) in
-            if let response = response, let route = response.routes.first {
-                self.resetDirectionData()
-                self.setupRouteData(route: route)
-    
-                //Add coordinate of each point in route to self.routePoints
-                //this will be used
-                for i in 1 ..< route.steps.count {
-                    let step = route.steps[i]
-                    self.steps.append(step)
-                    if i == 1 {self.distanceLeftToNextStep = step.distance}
-                    //set distance left t0 the distance to step 1
-                    
-                    print (step.instructions, step.polyline.pointCount)
-                    print (step.distance)
-                    
-                    var j:Int = 0
-                    
-                    step.polyline.coordinates.forEach { (coord) in
-                        var nextLoc = DirectionCLLocation(latitude: coord.latitude, longitude: coord.longitude)
-                        
-                        if j == 0 {
-                            //isDirectionChange is defaulted to false
-                            // the first point of route is the first one ( j == 0 )
-                            nextLoc = DirectionCLLocation(latitude: coord.latitude, longitude: coord.longitude)
-                            nextLoc.isDirectionChange = true
-                            nextLoc.stepIndex = i-1
-                        }
-                        nextLoc.positionIndex = self.totalPoints
-                        self.totalPoints += 1
-                        self.routePoints.append(nextLoc)
-                        j += 1
-                    }
-                }
+                [weak self](response, error) in
+                guard let response = response, response.routes.count > 0 else {return}
+                self?.availableRoutes = response.routes
+                self?.displayAvailableRoutes()
                 
-                self.addCircleOverlays()
-                self.addDistancesToNextStep()
-                self.directionModuleToVCDelegate?.startDirection(text: self.steps[0].instructions)
             }
-                
-                
-                
-                
-                
-        }
     }
     
+    func removeOverlays() {
+        self.mapView.removeOverlays(self.circleOverlays)
+        self.mapView.removeOverlays(self.availableRotesOverlays)
+        self.circleOverlays = []
+        
+    }
+    
+    func displayAvailableRoutes() {
+        let distance = self.availableRoutes.first?.distance ?? 4000
+        let region = MKCoordinateRegion(center: mapView.centerCoordinate, latitudinalMeters: distance * 1.5, longitudinalMeters: distance * 1.5)
+        mapView.setRegion(region, animated: true)
+        mapView.reloadInputViews()
+        
+        //create route overlay array with routeIndex to identify which Route is selected
+        for i in 0..<self.availableRoutes.count {
+            self.availableRotesOverlays.append(RoutePolylineOverlay(polyline: self.availableRoutes[i].polyline, routeIndex: i))
+        }
+        mapView.addOverlays(self.availableRotesOverlays)
+        self.directionModuleToVCDelegate?.presentRouteSelectTableView(destination: "Destination", origin: "My Location", routeData: [])
+        
+        
+    }
+    
+    func initiateRoute(route:MKRoute) {
+        
+            self.setupRouteData(route: route)
+
+            //Add coordinate of each point in route to self.routePoints
+            //this will be used
+            for i in 1 ..< route.steps.count {
+                
+                let step = route.steps[i]
+                self.steps.append(step)
+                if i == 1 {self.distanceLeftToNextStep = step.distance}
+                //set distance left t0 the distance to step 1
+                
+                print (step.instructions, step.polyline.pointCount)
+                print (step.distance)
+                
+                var j:Int = 0
+                
+                step.polyline.coordinates.forEach { (coord) in
+                    var nextLoc = DirectionCLLocation(latitude: coord.latitude, longitude: coord.longitude)
+                    
+                    if j == 0 {
+                        //isDirectionChange is defaulted to false
+                        // the first point of route is the first one ( j == 0 )
+                        nextLoc = DirectionCLLocation(latitude: coord.latitude, longitude: coord.longitude)
+                        nextLoc.isDirectionChange = true
+                        nextLoc.stepIndex = i-1
+                    }
+                    nextLoc.positionIndex = self.totalPoints
+                    self.totalPoints += 1
+                    self.routePoints.append(nextLoc)
+                    j += 1
+                }
+            }
+        
+            
+        self.addCircleOverlays()
+        self.addDistancesToNextStep()
+            
+        self.currentDirectionText = steps[0].instructions
+        self.directionModuleToVCDelegate?.startDirection(distance: String(steps[0].distance))
+        
+    }
     
     public func resetDirectionData() {
         currentStep = 0
@@ -186,7 +237,85 @@ class DirectionModule:NSObject {
         self.polyline = route.polyline
         self.mapView.addOverlay(self.polyline)
     }
+    
+    @objc func mapTapped(_ tap: UITapGestureRecognizer) {
+        //add function to enable/disable if needed
+        //clear self.availableRotesOverlays to distable this
+        if self.availableRotesOverlays.count == 0 {
+            return
+        }
+        
+        if tap.state != .recognized {return}
+            // Get map coordinate from touch point
+        let touchPt: CGPoint = tap.location(in: self.mapView)
+//           let coord: CLLocationCoordinate2D = mapView.convert(touchPt, toCoordinateFrom: map)
+//            MKMapPoint().
+        var nearestDistance: Double = 900500 //900km
+        var nearestPolyIndex: Int = self.selectedRouteIndex
+        
+        // for every overlay ...
+        let touchCoords = mapView.convert(touchPt, toCoordinateFrom: mapView)
+        let touchMapPoint = MKMapPoint(touchCoords)
+        
+        let latMeters = mapView.region.span.latitudeDelta * 111000
+        let acceptableErrorMargin:Double = latMeters / 40
+        
+        print ("touchMapPoint x,y:", touchMapPoint.x, touchMapPoint.y)
+        print ("touchPoint x,y: ", touchPt.x, touchPt.y)
+        for i in 0..<self.availableRotesOverlays.count {
+            // .. if MKPolyline ...
+            let polylineLOL = self.availableRotesOverlays[i].polyline
+                
+                // ... get the distance ...
+            
+            let distance:Double = distanceOf(pt: touchMapPoint, toPoly: polylineLOL )
+            print ("polyline.points() x,y: ", polylineLOL.points()[0].x, polylineLOL.points()[0].y)
+            print ("polyline.points() x,y: ", polylineLOL.points()[2].x, polylineLOL.points()[2].y)
+            
+            
+                // ... and find the nearest one
+            if distance < acceptableErrorMargin && distance < nearestDistance {
+                nearestDistance = distance
+                nearestPolyIndex = i
+            }
+        }
+        
+        self.selectedRouteIndex = nearestPolyIndex
+//        self.mapView.reloadInputViews()
+        self.mapView.removeOverlays(self.availableRotesOverlays)
+        self.mapView.addOverlays(self.availableRotesOverlays)
+        print (nearestDistance, self.selectedRouteIndex)
+    }
+
+    private func distanceOf(pt: MKMapPoint, toPoly poly: MKPolyline) -> Double {
+        var distance: Double = Double(MAXFLOAT)
+        for n in 0..<poly.pointCount - 1 {
+            let ptA = poly.points()[n]
+            let ptB = poly.points()[n + 1]
+            let xDelta: Double = ptB.x - ptA.x
+            let yDelta: Double = ptB.y - ptA.y
+            if xDelta == 0.0 && yDelta == 0.0 {
+                // Points must not be equal
+                continue
+            }
+            let u: Double = ((pt.x - ptA.x) * xDelta + (pt.y - ptA.y) * yDelta) / (xDelta * xDelta + yDelta * yDelta)
+            var ptClosest: MKMapPoint
+            if u < 0.0 {
+                ptClosest = ptA
+            }
+            else if u > 1.0 {
+                ptClosest = ptB
+            }
+            else {
+                ptClosest = MKMapPoint(x: ptA.x + u * xDelta, y: ptA.y + u * yDelta)
+            }
+
+            distance = min(distance, ptClosest.distance(to: pt))
+        }
+        return distance
+    }
 }
+
 
 
 
@@ -202,8 +331,26 @@ extension DirectionModule:CLLocationManagerDelegate {
             return
         }
         
+        //this function corrects if vehicle goes past current position
+        
         while !self.checkCorrectPosition(currLoc: currLoc) {
             self.currentPosition += 1
+            if self.incrementStepNext == true {
+                // in case of change direction, we can assume vehicle moving slow and location update regularly
+                // nextLoc is the beginning of nextStep
+                //while loop wont be called until vehicle moves past nextLoc
+                // then call while loop to update instruction label
+                 
+                //self.currentStep += self.stepOfNextLoc
+                //distanceLeftToNextStep array precalculated when fetching directions
+                self.distanceLeftToNextStep = self.distancesToNextStep[currentPosition - 1]
+                self.incrementStepNext = false
+                
+                //This is the only place currentDirectionText is updated
+                self.currentDirectionText = self.steps[self.currentStep].instructions
+            }
+            
+            
         }
         
         if currLoc.horizontalAccuracy < 0 || currLoc.horizontalAccuracy > 60 {
@@ -228,7 +375,8 @@ extension DirectionModule:CLLocationManagerDelegate {
             if distanceToNextLoc <= 30 {
                 
                 if nextLoc.isDirectionChange {
-                    //move this to update lo func
+                    //move this to update to updateLabel function in didUpdateLocation
+                    self.incrementStepNext = true
                     self.currentStep = nextLoc.stepIndex
                 } else {
                     self.currentPosition = nextLoc.positionIndex + 1
@@ -248,12 +396,18 @@ extension DirectionModule:CLLocationManagerDelegate {
         
         print (text, " curStep: ", self.currentStep, "currPos: ", self.currentPosition, "time elapsed: ", CFAbsoluteTimeGetCurrent() - startTime)
         
-        directionModuleToVCDelegate?.updateDirectionLabel(distance:"\(self.distanceLeftToNextStep + distanceToNextLoc)" , directionText: self.currentDirectionText)
+        directionModuleToVCDelegate?.updateDirectionLabel(distance:"\(self.distanceLeftToNextStep + distanceToNextLoc)")
     }
     
     
     
     func checkCorrectPosition(currLoc:CLLocation) -> Bool {
+        //check by drawing perpendicular line to line of currentPoint A and lastPoint B.
+        //assume currLoc is C, and P is the intersect of line perpendicular to AB that contains C, with line AB. CP perpendicular to AB, P is on AB.
+        // if C is between AB, leng(AB) > either leng(AP) or leng(BP)
+        // else, C is not between AB, fix by incrementing currentPosition
+        
+        
         if self.currentPosition < 1 || self.currentPosition == self.totalPoints - 1 {
             return true
         }
@@ -283,7 +437,9 @@ extension DirectionModule:CLLocationManagerDelegate {
         let distCurrPrev = pow((prevCGPoint.x - currCGPoint.x), 2) + pow((prevCGPoint.y - currCGPoint.y), 2)
         
         
-        return distPrevNext > max(distCurrNext,distPrevNext)
+        return distPrevNext > max(distCurrNext,distCurrPrev) + 5 // improve rate of returning false marginally to improve U turn label update
+        
+        //return false here cause while loop to be called
         
         
     }
