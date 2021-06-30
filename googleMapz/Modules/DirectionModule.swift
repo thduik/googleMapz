@@ -244,9 +244,6 @@ extension DirectionModule:CLLocationManagerDelegate {
         
                 }
             
-            
-            
-        
             if distanceToNextLoc > 30 {
                 break
             }
