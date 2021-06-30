@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:/Users/macbook/Desktop/Senior IOS product manager/googleMapz/bunOcHoangVanThu_path.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:PhongNhaCafe_path.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:/Users/macbook/Desktop/Senior IOS product manager/googleMapz/caPhe739_80mph.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:caPhe739_30mph.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:BenCoffeePath.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:DongVuongHotel.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:homeLocation.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:googleMapz.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+</Workspace>
