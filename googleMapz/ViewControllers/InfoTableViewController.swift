@@ -6,18 +6,21 @@
 //
 
 import UIKit
+import MapKit
 
 protocol InfoTableViewDelegate {
-    func didTapDirectionButton()
+    func didTapDirectionButton(destinationName:String, destinationCoordinate:CLLocationCoordinate2D)
 }
 
 class InfoTableViewController: UITableViewController {
     var placeInfo:PlaceInfoStruct
     var delegate:InfoTableViewDelegate?
     var completionTableVC = CompletionTableViewController()
+    var destinationCoordinate:CLLocationCoordinate2D
     
     init(style: UITableView.Style, placeData:PlaceInfoStruct) {
         placeInfo = placeData
+        self.destinationCoordinate = placeData.coordinate
         super.init(style: style)
     }
     
@@ -137,7 +140,7 @@ class InfoTableViewController: UITableViewController {
     
     @objc func didSelectSecondCellButton() {
         print ("did select second cell")
-        self.delegate?.didTapDirectionButton()
+        self.delegate?.didTapDirectionButton(destinationName: self.placeInfo.name, destinationCoordinate: self.destinationCoordinate)
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -216,7 +219,7 @@ extension InfoTableViewController:UIGestureRecognizerDelegate {
 
 extension InfoTableViewController:SixthInfoCellDelegate, SecondInfoCellDelegate {
     func buttonDidTap() {
-        self.delegate?.didTapDirectionButton()
+        self.delegate?.didTapDirectionButton(destinationName: self.placeInfo.name, destinationCoordinate: self.destinationCoordinate)
         self.dismiss(animated: true, completion: nil)
     }
     

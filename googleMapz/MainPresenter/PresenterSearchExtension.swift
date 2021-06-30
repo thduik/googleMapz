@@ -15,13 +15,14 @@ import UIKit
 extension MapViewPresenter {
     
     
-    func createSearchReques(keyword:String) -> MKLocalSearch.Request {
+    func createSearchReques(keyword:String) -> MKLocalSearch.Request? {
         //create search request from keyword, used by self.search(keyword)
         let searchRequest = MKLocalSearch.Request()
         searchRequest.naturalLanguageQuery = keyword
 //        searchRequest.pointOfInterestFilter = MKPointOfInterestFilter(including: [.bank,.bakery, .beach, .atm, .cafe, .restaurant])
 //        searchRequest.resultTypes = .pointOfInterest
-        searchRequest.region = MKCoordinateRegion(center: self.currentLocation, latitudinalMeters: 5000, longitudinalMeters: 5000)
+        guard let coord = self.locationManager.location?.coordinate else {return nil}
+        searchRequest.region = MKCoordinateRegion(center: coord, latitudinalMeters: 2000, longitudinalMeters: 2000)
         
         return searchRequest
     }
@@ -32,7 +33,8 @@ extension MapViewPresenter {
         
 //        searchRequest.pointOfInterestFilter = MKPointOfInterestFilter(including: [.bank,.bakery, .beach, .atm, .cafe, .restaurant])
 //        searchRequest.resultTypes = .pointOfInterest
-        searchRequest.region = MKCoordinateRegion(center: self.currentLocation, latitudinalMeters: 5000, longitudinalMeters: 5000)
+        
+        searchRequest.region = MKCoordinateRegion(center: self.currentLocation, latitudinalMeters: 2000, longitudinalMeters: 2000)
         
         return searchRequest
     }
@@ -49,15 +51,12 @@ extension MapViewPresenter {
             annotation.url = mapItem.url
             annotation.phoneNumber = mapItem.phoneNumber
             annArray.append(annotation)
-            
         }
-        
-        
         return annArray
     }
     
     func search(keyword:String) {
-        let searchRequest   = self.createSearchReques(keyword: keyword)
+        guard let searchRequest   = self.createSearchReques(keyword: keyword) else {return}
         self.searchWithRequest(request: searchRequest)
     }
     

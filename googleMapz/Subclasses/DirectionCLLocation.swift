@@ -11,6 +11,6 @@ import MapKit
 class DirectionCLLocation:CLLocation {
     var positionIndex:Int = 0
     var isDirectionChange:Bool = false
-    //var distanceToNextLoc:CLLocationDistance = 0
+    var distanceToNextStep:CLLocationDistance = 0
     var stepIndex:Int = 0
 }

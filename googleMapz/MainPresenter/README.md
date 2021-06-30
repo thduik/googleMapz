@@ -8,3 +8,7 @@ Show Routes Module = Show available routes leading to a certain destination
     
 Direction Module = Turn-By-Turn Direction for navigaion
 
+The only place for MapViewDelegate and LocationManagerDelegate is MainPresenter
+
+DirectionModule has its own LocationManager
+

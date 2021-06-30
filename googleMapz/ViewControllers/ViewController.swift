@@ -12,10 +12,8 @@ import AVFoundation
 class ViewController: UIViewController {
     var mapView = MKMapView()
     let searchBar = UISearchBar()
-    let directHeader = DirectionInstructionView()
-    let addPinButton = UIButton()
 //    var infoTableViewDelegate:VCToInfoTableViewDelegate?
-    var presenter = MapViewPresenter()
+    
     var zoomInButton = UIButton()
     var zoomOutButton = UIButton()
     
@@ -23,6 +21,10 @@ class ViewController: UIViewController {
     
     //handle tableview of LocalSearchCompleter completion results
     var completionPresenter: CompletionTableViewPresenter!
+    var presenter: MapViewPresenter!
+     
+    //views for direction module
+    
     
     private let pointsOfInterestFiler = MKPointOfInterestFilter(including: [.nightlife,.bank,.hospital,.restaurant,.atm,.bakery,.hotel,.movieTheater])
 //
@@ -32,8 +34,8 @@ class ViewController: UIViewController {
     private var userTrackingButton: MKUserTrackingButton!
     
 //    init() {
-//        presenter = MapViewPresenter()
-//        super.init(nibName: nil, bundle: nil)
+//          self.presenter = MapViewPresenter(mapView: self.mapView)
+//          super.init(nibName: nil, bundle: nil)
 //    }
 //    
 //    required init?(coder: NSCoder) {
@@ -43,8 +45,6 @@ class ViewController: UIViewController {
     override func viewWillLayoutSubviews() {
         //presenter = MapViewPresenter()
         super.viewWillLayoutSubviews()
-        
-        
         zoomOutButton.frame = CGRect(x: view.bounds.width - 50, y: view.bounds.height - 70, width: 42, height: 52)
         zoomInButton.frame = CGRect(x: view.bounds.width - 50, y: view.bounds.height - 112, width: 42, height: 42)
         userTrackingButton.frame = CGRect(x: 12, y: view.bounds.height - 112, width: 42, height: 42)
@@ -53,29 +53,20 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.presenter = MapViewPresenter(mapView: self.mapView, viewController: self)
         self.completionPresenter = CompletionTableViewPresenter(tableView: self.completionTableView,  parentVC: self, mapView: self.mapView)
         userTrackingButton = MKUserTrackingButton(mapView: self.mapView)
         self.addAllSubViews()
         self.addConstraints()
         searchBar.delegate = self
-        presenter.mapView = self.mapView
-        mapView.delegate = presenter as! MKMapViewDelegate
-        
-        presenter.delegateVC = self
-        presenter.directionModule.directionModuleToVCDelegate = self
-        
         self.configureButtons() //button UI and addTarget here too
-        
         self.hideKeyboardWhenTappedAround()
-        //        let imageOverlay = ImageMapOverlay(presenter.currentLocation, image: UIImage(named: "animeGirl1"))
-        //        mapView.addOverlay(imageOverlay)
         
       }
     
     func addAllSubViews() {
         view.addSubview(mapView)
         view.addSubview(searchBar)
-        
         view.addSubview(zoomInButton)
         view.addSubview(zoomOutButton)
         view.addSubview(userTrackingButton)
@@ -87,14 +78,7 @@ class ViewController: UIViewController {
        
     }
     
-    @objc func addPinButtonTapped() {
-        guard let coordVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "InputCoordinateViewController") as? InputCoordinateViewController else {return}
-        coordVC.delegate = self
-        self.present(coordVC, animated: true, completion: nil)
-        
-        //this func is for converting touch CGPoint to mapview coordinate in mapview
-        mapView.convert(CGPoint(x: 12, y: 44), toCoordinateFrom: mapView)
-    }
+    
     
     @objc func zoomOutButtonTapped() {
         
@@ -102,7 +86,6 @@ class ViewController: UIViewController {
         let newSpan = MKCoordinateSpan(latitudeDelta: span.latitudeDelta*5/3, longitudeDelta: span.longitudeDelta*5/3)
         
         self.mapView.region = MKCoordinateRegion(center: mapView.region.center, span: newSpan)
-
         
     }
     
@@ -120,17 +103,6 @@ extension ViewController:CompletionPresenterToVCDelegate {
     func didSelectCompletion(_ completion: MKLocalSearchCompletion) {
         self.presenter.search(withCompletion: completion)
     }
-    
-}
-
-extension ViewController: InputCoordinateViewControllerDelegate {
-    func didFinishInputCoordinate(coord: CLLocationCoordinate2D, name:String) {
-        let pinAnnotation = CustomPinAnnotation()
-        pinAnnotation.coordinate = coord
-        pinAnnotation.title = name
-        mapView.addAnnotation(pinAnnotation)
-        mapView.showAnnotations([pinAnnotation], animated: true)
-    }
 }
 
 
@@ -143,23 +115,32 @@ extension ViewController:PresenterToVCDelegate {
 
 
 extension ViewController:DirectionModuleToVCDelegate{
-    func presentRouteSelectTableView(destination: String, origin: String, routeData: [RouteTableViewData]) {
-//        let routeSelectTableView = RouteSelectionView(destination: "Destination", origin: "My Location", routeData: routeData)
-//        view.addSubview(routeSelectTableView)
-//        routeSelectTableView.frame = CGRect(x: 0, y: view.bounds.height*3/5, width: view.bounds.width, height: view.bounds.height*2/5)
-        
-    }
-    
-    func startDirection(distance: String) {
-        view.addSubview(directHeader)
-        directHeader.frame = CGRect(x: 0, y: 30, width: view.bounds.width, height: 172)
-        directHeader.updateLabels(distance: distance, instructions: self.presenter.directionModule.currentDirectionText)
-        directHeader.backgroundColor = .systemBackground
+    func endDirection(directHeader: DirectionInstructionView, directFooter: DirectionFooterView) {
+        self.view.layoutIfNeeded()
     }
     
     func updateDirectionLabel(distance: String) {
-        directHeader.updateLabels(distance: distance, instructions: self.presenter.directionModule.currentDirectionText)
+        
     }
+    
+    func startDirection(directHeader: DirectionInstructionView, directFooter: DirectionFooterView) {
+        print ("Adding subview")
+
+        self.view.addSubview(directHeader)
+        directHeader.frame = CGRect(x: 0, y: 30, width: self.view.bounds.width, height: 172)
+        directHeader.backgroundColor = .systemBackground
+        
+        self.view.addSubview(directFooter)
+        directFooter.frame = CGRect(x: 0 , y: self.view.bounds.height - 88, width: self.view.bounds.width, height: 88)
+        directFooter.backgroundColor = .systemBackground
+        
+        UIView.animate(withDuration: 1) {
+            
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    
     
     
     
@@ -168,30 +149,47 @@ extension ViewController:DirectionModuleToVCDelegate{
     }
     
     
+}
+
+protocol VCToInfoTableViewDelegate {
+    func didReceiveRouteData(routeData:DirectionStruct)
+}
+
+extension ViewController: ShowRoutesModuleDelegate {
+    func addGestureRecognizerToCell(cell: RouteSelectTableViewCell) {
+        print ("cell lol")
+        let tapGestureRecognizer = MyRecognizer(target: self, action: #selector(tapGestureRecognizedGoButton(_:)))
+        cell.goButton.addGestureRecognizer(tapGestureRecognizer)
+        cell.goButton.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+    }
+    @objc func tapGestureRecognizedGoButton(_ sender:MyRecognizer) {
+        print ("tap detected")
+//        self.selectedRouteIndex = sender.routeIndex
+//        self.animateRouteChange()
+    }
     
-    
-    
-    func endDirection() {
-        
+    @objc func buttonTapped(_ sender:UIButton) {
+        print ("buttonTapped")
+    }
+
+    func presentRouteSelectTableView(tableView: RouteSelectTableView) {
+        view.addSubview(tableView)
+        let tableHeight = view.bounds.height / 2
+        tableView.frame = CGRect(x: 0, y: view.bounds.height - tableHeight, width: view.bounds.width, height: tableHeight)
+        tableView.reloadData()
     }
 }
 
 
 
-protocol VCToInfoTableViewDelegate {
-    func didReceiveRouteData(routeData:DirectionStruct)
-}
-//UI CODE ONLY
+
+//UI AND SEARCH BAR DELEGATE CODE ONLY
 extension ViewController {
     
     @objc func hideTableView() {
         self.completionTableView.isHidden = true
     }
     func configureButtons() {
-        addPinButton.addTarget(self, action: #selector(addPinButtonTapped), for: .touchUpInside)
-        addPinButton.setTitle("Add Pin", for: .normal)
-        addPinButton.backgroundColor = .systemBackground
-        addPinButton.setTitleColor(.black, for: .normal)
     
         zoomInButton.addTarget(self, action: #selector(zoomInButtonTapped), for: .touchUpInside)
         zoomInButton.setTitle("+", for: .normal)
@@ -279,5 +277,5 @@ extension ViewController: UISearchBarDelegate {
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         
     }
-    
 }
+

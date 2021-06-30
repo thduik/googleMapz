@@ -24,43 +24,68 @@ class MapViewPresenter:NSObject {
     var infoTableViewDelegate:VCToInfoTableViewDelegate?
     var delegateVC:PresenterToVCDelegate?
     
-    var directionModule = DirectionModule()
+    var directionModule: DirectionModule!
     
     var myLocationAnnotation = CustomPointAnnotation()
     
-    var showRouteModule: ShowRoutesModule
+    var showRouteModule: ShowRoutesModule!
     
-    
+    var viewController:ViewController?
     //Direction Module Code
     
-   
+    let startTime = CFAbsoluteTimeGetCurrent()
     
-    override init() {
-        
+    init(mapView:MKMapView, viewController:ViewController) {
+        self.locationManager.stopUpdatingLocation()
+        self.mapView = mapView
+        self.delegateVC = viewController
+        self.viewController = viewController
+//        self.directionModule.directionModuleToVCDelegate = viewController
         super.init()
-//        self.configureSearchCompleter()
-        self.configureMapViewAndDelegates()
-        
-        
+        self.directionModule = DirectionModule(mapView: self.mapView, viewController: viewController, locationManager: self.locationManager, presenter: self)
+        self.showRouteModule = ShowRoutesModule(mapView: self.mapView, locationManager: self.locationManager, viewController: self.viewController!, presenter: self)
+        mapView.delegate = self
+        self.configureMapView()
         currentLocation = locationManager.location?.coordinate ?? CLLocationCoordinate2D(latitude: 10.339_400, longitude: 107.082_200)
         
+        self.configureLocationManager()
+        
+
+    }
+    
+    
+    
+    private func configureLocationManager() {
         locationManager.startUpdatingLocation()
-        locationManager.delegate = self as! CLLocationManagerDelegate
+        locationManager.delegate = self
         locationManager.requestAlwaysAuthorization()
         locationManager.activityType = .other
         
         locationManager.distanceFilter = 10
-        locationManager.desiredAccuracy = CLLocationAccuracy(CLAccuracyAuthorization(rawValue: CLAccuracyAuthorization.RawValue(kCLLocationAccuracyBest))!.rawValue)
-//        mapView.mapType = .hybridFlyover
+        locationManager.desiredAccuracy = 20
     }
     
-    func configureMapViewAndDelegates() {
+    func configureMapView() {
         mapView.region = .afterHours
-//        completer.delegate = self
         mapView.delegate = self as! MKMapViewDelegate
     }
 }
 
+extension MapViewPresenter: DirectionModuleToPresenterDelegate {
+    func directionModuleInactive() {
+        //get back delegate role of location manager and reconfigure
+        self.locationManager.delegate = self
+        self.configureLocationManager()
+    }
+    
+    
+}
+
+extension MapViewPresenter: ShowRoutesModuleToPresenterDelegate {
+    func initiateDirection(route: MKRoute, destinationName: String) {
+        self.directionModule.initiateRoute(route: route, destinationName: destinationName)
+    }
+}
 
 
 
@@ -71,6 +96,7 @@ class MapViewPresenter:NSObject {
 extension MapViewPresenter: CLLocationManagerDelegate {
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        
         let annoView = MKAnnotationView()
         if annotation as! NSObject == self.myLocationAnnotation {
             annoView.image = UIImage(systemName: "location.circle.fill")!
@@ -89,6 +115,9 @@ extension MapViewPresenter: CLLocationManagerDelegate {
         }
         return nil
     }
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print ("location Manager didUpdate location")
+    }
 }
 
 
@@ -101,17 +130,28 @@ extension MapViewPresenter:MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         
+        if self.directionModule.directionModuleActive { //in navigation mode
+            return
+        }
+        
         guard let annot = view.annotation as? CustomPointAnnotation else {
             
             return
         }
-        let placeInfo = PlaceInfoStruct(name: annot.title ?? "defaultTitle", categoryName: annot.pointOfInterestCategory?.rawValue ?? "defaultCat", address: annot.subtitle ?? "defaultAddress", phoneNumber: annot.phoneNumber, distance: "", modeOfTransport: "", url: annot.url)
+        let placeInfo = PlaceInfoStruct(name: annot.title ?? "defaultTitle", categoryName: annot.pointOfInterestCategory?.rawValue ?? "defaultCat", address: annot.subtitle ?? "defaultAddress", phoneNumber: annot.phoneNumber, distance: "", modeOfTransport: "", url: annot.url, coordinate: annot.coordinate)
+        
         let infoTableView = InfoTableViewController(style: .plain, placeData: placeInfo)
         infoTableView.delegate = self
         self.delegateVC?.presentInfoTableView(infoTableView)
         
-        self.directionModule.destination = view.annotation?.coordinate ?? self.currentLocation
-        //self.startDirectionRequest(with: destP)
+        let coord = view.annotation?.coordinate ?? self.currentLocation
+        
+        self.showRouteModule.destination = coord
+        
+        //test code only.  delete later
+        
+        
+        
         
     }
     
@@ -121,12 +161,20 @@ extension MapViewPresenter:MKMapViewDelegate {
             let renderer = MKPolylineRenderer(overlay: routeOverlay.polyline)
 //            renderer.strokeStart = 0
 //            renderer.strokeEnd = 1
+            
             renderer.strokeColor = .blue
             renderer.lineWidth = 8.0
-            if routeOverlay.routeIndex != self.directionModule.selectedRouteIndex {
-                renderer.lineDashPattern = [0,10]
+            if routeOverlay.routeIndex != self.showRouteModule.selectedRouteIndex {
+                renderer.lineDashPattern = [2,10]
             }
             
+            return renderer
+        }
+        
+        if overlay.isKind(of: MKPolyline.self) {
+            let renderer = MKPolylineRenderer(overlay: overlay)
+            renderer.strokeColor = .blue
+            renderer.lineWidth = 8.0
             return renderer
         }
         
@@ -152,8 +200,8 @@ extension MapViewPresenter:MKMapViewDelegate {
 
 
 extension MapViewPresenter:InfoTableViewDelegate {
-    func didTapDirectionButton() {
-        self.directionModule.startDirectionRequest()
+    func didTapDirectionButton(destinationName: String, destinationCoordinate: CLLocationCoordinate2D) {
+        self.showRouteModule.startDirectionRequest(destination: destinationCoordinate, destinationName: destinationName)
     }
 }
 

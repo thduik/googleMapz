@@ -9,6 +9,9 @@ import UIKit
 import MapKit
 
 class CompletionTableViewController: UITableViewController {
+    
+    
+    
     var completionArray = [MKLocalSearchCompletion]() {
         didSet {
             self.tableView.reloadData()
@@ -47,6 +50,7 @@ class CompletionTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         self.selectionHandler(completionArray[indexPath.row])
     }
+    
 
    
 

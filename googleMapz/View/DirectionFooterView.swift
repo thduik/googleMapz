@@ -11,9 +11,9 @@ import UIKit
 class DirectionFooterView:UIView {
     private let placeLabel = UILabel()
     private let timeLabel = UILabel()
-    private let endButton = UIButton()
+    let endButton = UIButton()
     
-    override init(frame: CGRect) {
+    override init(frame:CGRect) {
         super.init(frame: frame)
         self.setupView()
     }
@@ -57,7 +57,15 @@ class DirectionFooterView:UIView {
         timeLabel.numberOfLines = 0
     }
     
-    func configureLabels(time:String, placeName:String) {
+    func configureLabels(withEsimatedTime travelTime:Double, placeName:String) {
+        let minutes = Int(travelTime / 60)
+        var time:String = "\(minutes) min"
+        
+        if minutes > 60 {
+            let hours = minutes / 60
+            let mins = minutes % 60
+            time = "\(hours) hr \(mins) min"
+        }
         self.timeLabel.text = time
         self.placeLabel.text = placeName
     }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MapKit
 
 struct PlaceInfoStruct {
     let name:String
@@ -15,4 +16,5 @@ struct PlaceInfoStruct {
     var distance:String?
     var modeOfTransport:String?
     var url:URL?
+    var coordinate:CLLocationCoordinate2D
 }

@@ -36,6 +36,7 @@ class RouteSelectTableViewCell: UITableViewCell {
         goButton.setTitleColor(.white, for: .normal)
         goButton.backgroundColor = .green
         
+        
         addSubview(topLabel)
         topLabel.translatesAutoresizingMaskIntoConstraints = false
         topLabel.trailingAnchor.constraint(equalTo: goButton.leadingAnchor, constant: 8).isActive = true
@@ -54,5 +55,9 @@ class RouteSelectTableViewCell: UITableViewCell {
         bottomLabel.font = .systemFont(ofSize: 20)
         bottomLabel.numberOfLines = 0
         
+    }
+    
+    @objc func didtapButton(_ sender:UIButton) {
+        print ("Did tap button in cell")
     }
 }

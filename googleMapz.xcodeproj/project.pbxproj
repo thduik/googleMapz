@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		3B491EA9434CE6543D94EC2A /* Pods_googleMapzTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B85DE7AD26CC2449F848994 /* Pods_googleMapzTests.framework */; };
 		B92061D8EB9730523988908E /* Pods_googleMapz_googleMapzUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF361C1EF3DEABA8818640FE /* Pods_googleMapz_googleMapzUITests.framework */; };
+		FA047BBA268589A000282E33 /* TapGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA047BB9268589A000282E33 /* TapGestureRecognizer.swift */; };
+		FA05202D268B2521003705F1 /* old code.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA05202C268B2521003705F1 /* old code.swift */; };
 		FA07562126773E1C003C49CB /* PlaceInfoStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA07562026773E1C003C49CB /* PlaceInfoStruct.swift */; };
 		FA26EA652675924F00EB575E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA26EA642675924F00EB575E /* Constants.swift */; };
 		FA3068E0267642B10087B786 /* CustomMapItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3068DF267642B10087B786 /* CustomMapItem.swift */; };
@@ -41,12 +43,12 @@
 		FA6695962684247800DE858F /* RouteSelectTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6695952684247800DE858F /* RouteSelectTableViewCell.swift */; };
 		FA66959A26842D6900DE858F /* RouteTableViewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA66959926842D6900DE858F /* RouteTableViewData.swift */; };
 		FA66959E26842ECB00DE858F /* PresenterSearchExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA66959D26842ECB00DE858F /* PresenterSearchExtension.swift */; };
-		FA6695A926842FDC00DE858F /* MapVIewCoreLocationDelegate in Sources */ = {isa = PBXBuildFile; fileRef = FA6695A826842FDC00DE858F /* MapVIewCoreLocationDelegate */; };
 		FA86B3FC267DE5C00074D7CD /* MKMultiPointExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA86B3FB267DE5C00074D7CD /* MKMultiPointExtension.swift */; };
 		FA86B402267DF4590074D7CD /* DirectionCLLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA86B401267DF4590074D7CD /* DirectionCLLocation.swift */; };
 		FA93637A268381E30090DBE2 /* RouteSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA936379268381E30090DBE2 /* RouteSelectionView.swift */; };
 		FA93637E268383B40090DBE2 /* RouteSelectTopLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA93637D268383B40090DBE2 /* RouteSelectTopLabel.swift */; };
 		FA93638426838B460090DBE2 /* UILabelAttrTextTapGestureExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA93638326838B460090DBE2 /* UILabelAttrTextTapGestureExtension.swift */; };
+		FAB1528026881DC300FD400D /* InputCoordinateVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB1527F26881DC300FD400D /* InputCoordinateVC.swift */; };
 		FABDD5942676140E00C12D1F /* LocationPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABDD5932676140E00C12D1F /* LocationPreviewView.swift */; };
 		FABDD5992676184300C12D1F /* CustomPointAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABDD5982676184300C12D1F /* CustomPointAnnotation.swift */; };
 		FAC242692679A07C00EE8AF7 /* MainPresenterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC242682679A07C00EE8AF7 /* MainPresenterProtocol.swift */; };
@@ -55,6 +57,9 @@
 		FAC74477267AE712009126DC /* ImageMapRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC74476267AE712009126DC /* ImageMapRenderer.swift */; };
 		FAC9EE9626809F3D00390C44 /* DirectionStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC9EE9526809F3D00390C44 /* DirectionStruct.swift */; };
 		FAC9EE9A2680A12300390C44 /* CompletionTableViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC9EE992680A12300390C44 /* CompletionTableViewPresenter.swift */; };
+		FAD17D2B26872CBF00F62328 /* RouteSelectTableHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD17D2A26872CBF00F62328 /* RouteSelectTableHeader.swift */; };
+		FADAD9112686CB790002AD83 /* RouteSelectXIBTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADAD90F2686CB790002AD83 /* RouteSelectXIBTableViewCell.swift */; };
+		FADAD9122686CB790002AD83 /* RouteSelectXIBTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FADAD9102686CB790002AD83 /* RouteSelectXIBTableViewCell.xib */; };
 		FAF58C81267D9792006714AE /* Pods_googleMapz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FA8EE4EAA93DBE297DDD48 /* Pods_googleMapz.framework */; };
 		FAF58C82267D9792006714AE /* Pods_googleMapz.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C8FA8EE4EAA93DBE297DDD48 /* Pods_googleMapz.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FAF58C91267D9A5E006714AE /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAF58C90267D9A5E006714AE /* MapKit.framework */; };
@@ -105,6 +110,8 @@
 		C8FA8EE4EAA93DBE297DDD48 /* Pods_googleMapz.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_googleMapz.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E99856E62F2B47B093AC2F56 /* Pods-googleMapz-googleMapzUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-googleMapz-googleMapzUITests.release.xcconfig"; path = "Target Support Files/Pods-googleMapz-googleMapzUITests/Pods-googleMapz-googleMapzUITests.release.xcconfig"; sourceTree = "<group>"; };
 		F74336DB61A8187C9299E677 /* Pods-googleMapz.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-googleMapz.debug.xcconfig"; path = "Target Support Files/Pods-googleMapz/Pods-googleMapz.debug.xcconfig"; sourceTree = "<group>"; };
+		FA047BB9268589A000282E33 /* TapGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapGestureRecognizer.swift; sourceTree = "<group>"; };
+		FA05202C268B2521003705F1 /* old code.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "old code.swift"; sourceTree = "<group>"; };
 		FA07562026773E1C003C49CB /* PlaceInfoStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceInfoStruct.swift; sourceTree = "<group>"; };
 		FA26EA642675924F00EB575E /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		FA3068DF267642B10087B786 /* CustomMapItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMapItem.swift; sourceTree = "<group>"; };
@@ -143,12 +150,12 @@
 		FA6695952684247800DE858F /* RouteSelectTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSelectTableViewCell.swift; sourceTree = "<group>"; };
 		FA66959926842D6900DE858F /* RouteTableViewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteTableViewData.swift; sourceTree = "<group>"; };
 		FA66959D26842ECB00DE858F /* PresenterSearchExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterSearchExtension.swift; sourceTree = "<group>"; };
-		FA6695A826842FDC00DE858F /* MapVIewCoreLocationDelegate */ = {isa = PBXFileReference; lastKnownFileType = text; path = MapVIewCoreLocationDelegate; sourceTree = "<group>"; };
 		FA86B3FB267DE5C00074D7CD /* MKMultiPointExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKMultiPointExtension.swift; sourceTree = "<group>"; };
 		FA86B401267DF4590074D7CD /* DirectionCLLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionCLLocation.swift; sourceTree = "<group>"; };
 		FA936379268381E30090DBE2 /* RouteSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSelectionView.swift; sourceTree = "<group>"; };
 		FA93637D268383B40090DBE2 /* RouteSelectTopLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSelectTopLabel.swift; sourceTree = "<group>"; };
 		FA93638326838B460090DBE2 /* UILabelAttrTextTapGestureExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UILabelAttrTextTapGestureExtension.swift; sourceTree = "<group>"; };
+		FAB1527F26881DC300FD400D /* InputCoordinateVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputCoordinateVC.swift; sourceTree = "<group>"; };
 		FABDD5932676140E00C12D1F /* LocationPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPreviewView.swift; sourceTree = "<group>"; };
 		FABDD5982676184300C12D1F /* CustomPointAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPointAnnotation.swift; sourceTree = "<group>"; };
 		FAC242682679A07C00EE8AF7 /* MainPresenterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPresenterProtocol.swift; sourceTree = "<group>"; };
@@ -157,6 +164,9 @@
 		FAC74476267AE712009126DC /* ImageMapRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMapRenderer.swift; sourceTree = "<group>"; };
 		FAC9EE9526809F3D00390C44 /* DirectionStruct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionStruct.swift; sourceTree = "<group>"; };
 		FAC9EE992680A12300390C44 /* CompletionTableViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionTableViewPresenter.swift; sourceTree = "<group>"; };
+		FAD17D2A26872CBF00F62328 /* RouteSelectTableHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSelectTableHeader.swift; sourceTree = "<group>"; };
+		FADAD90F2686CB790002AD83 /* RouteSelectXIBTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSelectXIBTableViewCell.swift; sourceTree = "<group>"; };
+		FADAD9102686CB790002AD83 /* RouteSelectXIBTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RouteSelectXIBTableViewCell.xib; sourceTree = "<group>"; };
 		FAF58C90267D9A5E006714AE /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		FAF58C96267D9E31006714AE /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Main.strings"; sourceTree = "<group>"; };
 		FAF58C97267D9E31006714AE /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
@@ -242,6 +252,7 @@
 				FAF58C9C267DA65D006714AE /* DirectionMKCircle.swift */,
 				FA86B401267DF4590074D7CD /* DirectionCLLocation.swift */,
 				FAF7CDBB2682EE4A00044786 /* RoutePolylineOverlay.swift */,
+				FA047BB9268589A000282E33 /* TapGestureRecognizer.swift */,
 			);
 			path = Subclasses;
 			sourceTree = "<group>";
@@ -251,7 +262,6 @@
 			children = (
 				FA3068E72676448D0087B786 /* MapViewPresenter.swift */,
 				FAC242682679A07C00EE8AF7 /* MainPresenterProtocol.swift */,
-				FA6695A826842FDC00DE858F /* MapVIewCoreLocationDelegate */,
 				FA66959D26842ECB00DE858F /* PresenterSearchExtension.swift */,
 				FAFC9F0426848DDE0076D91D /* README.md */,
 			);
@@ -268,6 +278,9 @@
 				FA30691026765AF40087B786 /* SixthInfoCell.swift */,
 				FA65EEF92678BA790031A291 /* Header.swift */,
 				FA6695952684247800DE858F /* RouteSelectTableViewCell.swift */,
+				FADAD90F2686CB790002AD83 /* RouteSelectXIBTableViewCell.swift */,
+				FADAD9102686CB790002AD83 /* RouteSelectXIBTableViewCell.xib */,
+				FAD17D2A26872CBF00F62328 /* RouteSelectTableHeader.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -335,6 +348,7 @@
 				FABDD59D26761B9F00C12D1F /* View */,
 				FA3068F5267651410087B786 /* Cell */,
 				FA07562526773E23003C49CB /* Models */,
+				FAB1527E26881DAD00FD400D /* deprecated */,
 			);
 			path = googleMapz;
 			sourceTree = "<group>";
@@ -376,6 +390,14 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		FAB1527E26881DAD00FD400D /* deprecated */ = {
+			isa = PBXGroup;
+			children = (
+				FAB1527F26881DC300FD400D /* InputCoordinateVC.swift */,
+			);
+			path = deprecated;
+			sourceTree = "<group>";
+		};
 		FABDD59D26761B9F00C12D1F /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -403,6 +425,7 @@
 				FAC2426E2679A46A00EE8AF7 /* DirectionModule.swift */,
 				FAFC9EFE26848D5A0076D91D /* ShowRoutesModule.swift */,
 				FAFCAA74268349A10061306D /* README.md */,
+				FA05202C268B2521003705F1 /* old code.swift */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -518,6 +541,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA45976426749018000B8916 /* LaunchScreen.storyboard in Resources */,
+				FADAD9122686CB790002AD83 /* RouteSelectXIBTableViewCell.xib in Resources */,
 				FA45976126749018000B8916 /* Assets.xcassets in Resources */,
 				FA45975C26749017000B8916 /* Main.storyboard in Resources */,
 			);
@@ -675,11 +699,15 @@
 				FA65EEFA2678BA790031A291 /* Header.swift in Sources */,
 				FA66959226841F2B00DE858F /* RouteSelectTableView.swift in Sources */,
 				FA3068F12676513C0087B786 /* SecondInfoCell.swift in Sources */,
+				FA05202D268B2521003705F1 /* old code.swift in Sources */,
 				FA86B3FC267DE5C00074D7CD /* MKMultiPointExtension.swift in Sources */,
-				FA6695A926842FDC00DE858F /* MapVIewCoreLocationDelegate in Sources */,
 				FABDD5942676140E00C12D1F /* LocationPreviewView.swift in Sources */,
 				FA93637A268381E30090DBE2 /* RouteSelectionView.swift in Sources */,
+				FADAD9112686CB790002AD83 /* RouteSelectXIBTableViewCell.swift in Sources */,
 				FAC74477267AE712009126DC /* ImageMapRenderer.swift in Sources */,
+				FA047BBA268589A000282E33 /* TapGestureRecognizer.swift in Sources */,
+				FAD17D2B26872CBF00F62328 /* RouteSelectTableHeader.swift in Sources */,
+				FAB1528026881DC300FD400D /* InputCoordinateVC.swift in Sources */,
 				FAFC9EFF26848D5A0076D91D /* ShowRoutesModule.swift in Sources */,
 				FA42AF10267C81E600ECEB22 /* CustomPinAnnotation.swift in Sources */,
 				FA93637E268383B40090DBE2 /* RouteSelectTopLabel.swift in Sources */,
